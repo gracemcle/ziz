@@ -1,0 +1,1096 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.6.42">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+
+<title>Ziz Data</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { display: inline-block; text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="single_cap_files/libs/clipboard/clipboard.min.js"></script>
+<script src="single_cap_files/libs/quarto-html/quarto.js"></script>
+<script src="single_cap_files/libs/quarto-html/popper.min.js"></script>
+<script src="single_cap_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="single_cap_files/libs/quarto-html/anchor.min.js"></script>
+<link href="single_cap_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="single_cap_files/libs/quarto-html/quarto-syntax-highlighting-2f5df379a58b258e96c21c0638c20c03.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="single_cap_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="single_cap_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="single_cap_files/libs/bootstrap/bootstrap-c484db760af1fc3e5d6f1c217c4d5812.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Ziz Data</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="multi-channel-audio-visualization-pipeline" class="level1">
+<h1>Multi-Channel Audio Visualization Pipeline</h1>
+<section id="data-loading-and-preparation" class="level2">
+<h2 class="anchored" data-anchor-id="data-loading-and-preparation">Data Loading and Preparation</h2>
+<ul>
+<li>The script loads metadata from a JSON file containing recording session information</li>
+<li>It constructs file paths to audio chunks based on metadata</li>
+<li>The first audio chunk is loaded as a NumPy array with shape (number of samples, number of channels)</li>
+<li>Analysis focuses on the first 20 seconds of audio data (as specified in metadata)</li>
+</ul>
+</section>
+<section id="visualization-types" class="level2">
+<h2 class="anchored" data-anchor-id="visualization-types">Visualization Types</h2>
+<section id="waveform-visualization" class="level3">
+<h3 class="anchored" data-anchor-id="waveform-visualization">1. Waveform Visualization</h3>
+<ul>
+<li>Displays the raw amplitude over time for the first channel</li>
+<li>Provides basic temporal characteristics of the audio signal</li>
+<li>Helps identify regions of silence, speech, or other acoustic events</li>
+</ul>
+</section>
+<section id="power-spectral-density-psd" class="level3">
+<h3 class="anchored" data-anchor-id="power-spectral-density-psd">2. Power Spectral Density (PSD)</h3>
+<ul>
+<li>Computes the frequency distribution of signal power using Welch’s method</li>
+<li>Uses a 4096-sample window for good frequency resolution</li>
+<li>Reveals dominant frequencies in the recording (e.g., drone motor frequencies)</li>
+<li>Logarithmic scale helps visualize wide range of power values</li>
+</ul>
+</section>
+<section id="spectrogram-analysis" class="level3">
+<h3 class="anchored" data-anchor-id="spectrogram-analysis">3. Spectrogram Analysis</h3>
+<ul>
+<li>Creates a time-frequency representation showing how spectral content changes over time</li>
+<li>Uses 1024-sample windows with overlap</li>
+<li>Converts magnitude to decibels for better visibility</li>
+<li>Color intensity indicates energy level at each time-frequency point</li>
+</ul>
+</section>
+<section id="channel-energy-comparison" class="level3">
+<h3 class="anchored" data-anchor-id="channel-energy-comparison">4. Channel Energy Comparison</h3>
+<ul>
+<li>Calculates RMS (Root Mean Square) energy in 100ms windows for all channels</li>
+<li>Plots energy levels over time for each channel</li>
+<li>Enables comparison of signal strength across the microphone array</li>
+<li>Helpful for identifying directional characteristics of sound sources</li>
+</ul>
+</section>
+<section id="d-multi-channel-spectrogram" class="level3">
+<h3 class="anchored" data-anchor-id="d-multi-channel-spectrogram">5. 3D Multi-Channel Spectrogram</h3>
+<ul>
+<li>Creates a three-dimensional visualization showing time-frequency content for multiple channels</li>
+<li>Selects a subset of channels (up to 5) for clarity</li>
+<li>Downsamples the data for better visualization performance</li>
+<li>Offsets each channel’s surface plot for clear separation</li>
+<li>Provides spatial-spectral overview of the recording</li>
+</ul>
+</section>
+<section id="spatial-energy-distribution-polar-plot" class="level3">
+<h3 class="anchored" data-anchor-id="spatial-energy-distribution-polar-plot">6. Spatial Energy Distribution (Polar Plot)</h3>
+<ul>
+<li>For 16-channel UMA-16V2 array recordings only</li>
+<li>Creates a polar plot showing average energy distribution across channels</li>
+<li>Assumes microphones are arranged in a circle</li>
+<li>Visualizes the directional characteristics of the sound field</li>
+<li>Helps identify direction of arrival for sound sources</li>
+</ul>
+</section>
+</section>
+<section id="applications" class="level2">
+<h2 class="anchored" data-anchor-id="applications">Applications</h2>
+<p>This visualization pipeline is particularly valuable for: - Analyzing drone acoustic signatures - Spatial audio research - Sound source localization - Microphone array performance evaluation - Environmental sound monitoring</p>
+<div id="cell-2" class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy.signal <span class="im">import</span> welch, spectrogram</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> signal</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> librosa</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> librosa.display</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Configuration</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>cfg <span class="op">=</span> {</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>    <span class="st">'metadata_local_path_str'</span>: <span class="st">'/home/grace/Develop/ziz/2025-04-21_19-08-01_Session1_MJ_Brown Building Apartments_Sunny/metadata.json'</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">'__main__'</span>:</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Open and read the metadata file</span></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>    metadata_json <span class="op">=</span> Path(cfg[<span class="st">'metadata_local_path_str'</span>])</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>    local_path <span class="op">=</span> metadata_json.parent</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> metadata_json.<span class="bu">open</span>(<span class="st">'r'</span>) <span class="im">as</span> f:</span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a>        metadata <span class="op">=</span> json.load(f)</span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Collect audio chunk paths</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a>    audio_chunks_over_time <span class="op">=</span> []</span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> audio_metadata <span class="kw">in</span> metadata[<span class="st">'audio_chunks_timestamps'</span>]:</span>
+<span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a>        orig_path <span class="op">=</span> Path(audio_metadata[<span class="st">'file_name'</span>])</span>
+<span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a>        last_two <span class="op">=</span> orig_path.parts[<span class="op">-</span><span class="dv">2</span>:]</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>        audio_path <span class="op">=</span> local_path.joinpath(<span class="op">*</span>last_two)</span>
+<span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>        audio_chunks_over_time.append(audio_path)</span>
+<span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Load the first audio chunk</span></span>
+<span id="cb1-33"><a href="#cb1-33" aria-hidden="true" tabindex="-1"></a>    idx <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb1-34"><a href="#cb1-34" aria-hidden="true" tabindex="-1"></a>    audio_data_np <span class="op">=</span> np.load(audio_chunks_over_time[idx])  <span class="co"># shape: (n_samples, n_channels)</span></span>
+<span id="cb1-35"><a href="#cb1-35" aria-hidden="true" tabindex="-1"></a>    expected_sample_rate <span class="op">=</span> <span class="bu">int</span>(metadata[<span class="st">'sound_card_sample_rate'</span>])</span>
+<span id="cb1-36"><a href="#cb1-36" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Sample rate: </span><span class="sc">{</span>expected_sample_rate<span class="sc">}</span><span class="ss"> Hz'</span>)</span>
+<span id="cb1-37"><a href="#cb1-37" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Audio data shape: </span><span class="sc">{</span>audio_data_np<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb1-38"><a href="#cb1-38" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-39"><a href="#cb1-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Use first 20 seconds (according to chunk size in metadata)</span></span>
+<span id="cb1-40"><a href="#cb1-40" aria-hidden="true" tabindex="-1"></a>    duration_seconds <span class="op">=</span> metadata[<span class="st">'chunk_size_in_seconds'</span>]</span>
+<span id="cb1-41"><a href="#cb1-41" aria-hidden="true" tabindex="-1"></a>    num_samples <span class="op">=</span> <span class="bu">min</span>(<span class="bu">int</span>(expected_sample_rate <span class="op">*</span> duration_seconds), audio_data_np.shape[<span class="dv">0</span>])</span>
+<span id="cb1-42"><a href="#cb1-42" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Analyzing </span><span class="sc">{</span>duration_seconds<span class="sc">}</span><span class="ss"> seconds (</span><span class="sc">{</span>num_samples<span class="sc">}</span><span class="ss"> samples)'</span>)</span>
+<span id="cb1-43"><a href="#cb1-43" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-44"><a href="#cb1-44" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a figure with multiple subplots</span></span>
+<span id="cb1-45"><a href="#cb1-45" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">20</span>))</span>
+<span id="cb1-46"><a href="#cb1-46" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-47"><a href="#cb1-47" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ===== PLOT 1: Waveform of first channel =====</span></span>
+<span id="cb1-48"><a href="#cb1-48" aria-hidden="true" tabindex="-1"></a>    plt.subplot(<span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb1-49"><a href="#cb1-49" aria-hidden="true" tabindex="-1"></a>    time <span class="op">=</span> np.arange(num_samples) <span class="op">/</span> expected_sample_rate</span>
+<span id="cb1-50"><a href="#cb1-50" aria-hidden="true" tabindex="-1"></a>    channel <span class="op">=</span> <span class="dv">0</span>  <span class="co"># First channel</span></span>
+<span id="cb1-51"><a href="#cb1-51" aria-hidden="true" tabindex="-1"></a>    plt.plot(time, audio_data_np[:num_samples, channel])</span>
+<span id="cb1-52"><a href="#cb1-52" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="ss">f'Waveform (Channel </span><span class="sc">{</span>channel<span class="sc">}</span><span class="ss">)'</span>)</span>
+<span id="cb1-53"><a href="#cb1-53" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">'Time (s)'</span>)</span>
+<span id="cb1-54"><a href="#cb1-54" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">'Amplitude'</span>)</span>
+<span id="cb1-55"><a href="#cb1-55" aria-hidden="true" tabindex="-1"></a>    plt.grid(<span class="va">True</span>)</span>
+<span id="cb1-56"><a href="#cb1-56" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-57"><a href="#cb1-57" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ===== PLOT 2: Power Spectral Density =====</span></span>
+<span id="cb1-58"><a href="#cb1-58" aria-hidden="true" tabindex="-1"></a>    plt.subplot(<span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb1-59"><a href="#cb1-59" aria-hidden="true" tabindex="-1"></a>    freqs, power <span class="op">=</span> welch(audio_data_np[:num_samples, channel], fs<span class="op">=</span>expected_sample_rate, nperseg<span class="op">=</span><span class="dv">4096</span>)</span>
+<span id="cb1-60"><a href="#cb1-60" aria-hidden="true" tabindex="-1"></a>    plt.semilogy(freqs, power)</span>
+<span id="cb1-61"><a href="#cb1-61" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="ss">f'Power Spectral Density (Channel </span><span class="sc">{</span>channel<span class="sc">}</span><span class="ss">)'</span>)</span>
+<span id="cb1-62"><a href="#cb1-62" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">'Frequency (Hz)'</span>)</span>
+<span id="cb1-63"><a href="#cb1-63" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">'Power Spectral Density (V²/Hz)'</span>)</span>
+<span id="cb1-64"><a href="#cb1-64" aria-hidden="true" tabindex="-1"></a>    plt.grid(<span class="va">True</span>)</span>
+<span id="cb1-65"><a href="#cb1-65" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-66"><a href="#cb1-66" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ===== PLOT 3: Spectrogram =====</span></span>
+<span id="cb1-67"><a href="#cb1-67" aria-hidden="true" tabindex="-1"></a>    plt.subplot(<span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">3</span>)</span>
+<span id="cb1-68"><a href="#cb1-68" aria-hidden="true" tabindex="-1"></a>    f, t, Sxx <span class="op">=</span> spectrogram(audio_data_np[:num_samples, channel], fs<span class="op">=</span>expected_sample_rate, nperseg<span class="op">=</span><span class="dv">1024</span>)</span>
+<span id="cb1-69"><a href="#cb1-69" aria-hidden="true" tabindex="-1"></a>    plt.pcolormesh(t, f, <span class="dv">10</span> <span class="op">*</span> np.log10(Sxx), shading<span class="op">=</span><span class="st">'gouraud'</span>)</span>
+<span id="cb1-70"><a href="#cb1-70" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="ss">f'Spectrogram (Channel </span><span class="sc">{</span>channel<span class="sc">}</span><span class="ss">)'</span>)</span>
+<span id="cb1-71"><a href="#cb1-71" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">'Time (s)'</span>)</span>
+<span id="cb1-72"><a href="#cb1-72" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">'Frequency (Hz)'</span>)</span>
+<span id="cb1-73"><a href="#cb1-73" aria-hidden="true" tabindex="-1"></a>    plt.colorbar(label<span class="op">=</span><span class="st">'Intensity (dB)'</span>)</span>
+<span id="cb1-74"><a href="#cb1-74" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-75"><a href="#cb1-75" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ===== PLOT 4: Channel Comparison (RMS Energy) =====</span></span>
+<span id="cb1-76"><a href="#cb1-76" aria-hidden="true" tabindex="-1"></a>    plt.subplot(<span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">4</span>)</span>
+<span id="cb1-77"><a href="#cb1-77" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-78"><a href="#cb1-78" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Calculate RMS energy for each channel</span></span>
+<span id="cb1-79"><a href="#cb1-79" aria-hidden="true" tabindex="-1"></a>    n_channels <span class="op">=</span> <span class="bu">min</span>(<span class="dv">16</span>, audio_data_np.shape[<span class="dv">1</span>])  <span class="co"># Use up to 16 channels</span></span>
+<span id="cb1-80"><a href="#cb1-80" aria-hidden="true" tabindex="-1"></a>    channel_energies <span class="op">=</span> []</span>
+<span id="cb1-81"><a href="#cb1-81" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-82"><a href="#cb1-82" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ch <span class="kw">in</span> <span class="bu">range</span>(n_channels):</span>
+<span id="cb1-83"><a href="#cb1-83" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Calculate RMS energy in 100ms windows</span></span>
+<span id="cb1-84"><a href="#cb1-84" aria-hidden="true" tabindex="-1"></a>        window_size <span class="op">=</span> <span class="bu">int</span>(expected_sample_rate <span class="op">*</span> <span class="fl">0.1</span>)</span>
+<span id="cb1-85"><a href="#cb1-85" aria-hidden="true" tabindex="-1"></a>        n_windows <span class="op">=</span> num_samples <span class="op">//</span> window_size</span>
+<span id="cb1-86"><a href="#cb1-86" aria-hidden="true" tabindex="-1"></a>        energy <span class="op">=</span> []</span>
+<span id="cb1-87"><a href="#cb1-87" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-88"><a href="#cb1-88" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_windows):</span>
+<span id="cb1-89"><a href="#cb1-89" aria-hidden="true" tabindex="-1"></a>            start <span class="op">=</span> i <span class="op">*</span> window_size</span>
+<span id="cb1-90"><a href="#cb1-90" aria-hidden="true" tabindex="-1"></a>            end <span class="op">=</span> (i <span class="op">+</span> <span class="dv">1</span>) <span class="op">*</span> window_size</span>
+<span id="cb1-91"><a href="#cb1-91" aria-hidden="true" tabindex="-1"></a>            segment <span class="op">=</span> audio_data_np[start:end, ch]</span>
+<span id="cb1-92"><a href="#cb1-92" aria-hidden="true" tabindex="-1"></a>            rms <span class="op">=</span> np.sqrt(np.mean(np.square(segment)))</span>
+<span id="cb1-93"><a href="#cb1-93" aria-hidden="true" tabindex="-1"></a>            energy.append(rms)</span>
+<span id="cb1-94"><a href="#cb1-94" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-95"><a href="#cb1-95" aria-hidden="true" tabindex="-1"></a>        channel_energies.append(energy)</span>
+<span id="cb1-96"><a href="#cb1-96" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-97"><a href="#cb1-97" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create time axis for energy plot</span></span>
+<span id="cb1-98"><a href="#cb1-98" aria-hidden="true" tabindex="-1"></a>    energy_time <span class="op">=</span> np.arange(<span class="bu">len</span>(channel_energies[<span class="dv">0</span>])) <span class="op">*</span> <span class="fl">0.1</span>  <span class="co"># 100ms windows</span></span>
+<span id="cb1-99"><a href="#cb1-99" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-100"><a href="#cb1-100" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Plot energies for each channel</span></span>
+<span id="cb1-101"><a href="#cb1-101" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ch <span class="kw">in</span> <span class="bu">range</span>(n_channels):</span>
+<span id="cb1-102"><a href="#cb1-102" aria-hidden="true" tabindex="-1"></a>        plt.plot(energy_time, channel_energies[ch], label<span class="op">=</span><span class="ss">f'Channel </span><span class="sc">{</span>ch<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb1-103"><a href="#cb1-103" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-104"><a href="#cb1-104" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">'Channel Energy Comparison (RMS)'</span>)</span>
+<span id="cb1-105"><a href="#cb1-105" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">'Time (s)'</span>)</span>
+<span id="cb1-106"><a href="#cb1-106" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">'RMS Energy'</span>)</span>
+<span id="cb1-107"><a href="#cb1-107" aria-hidden="true" tabindex="-1"></a>    plt.legend(loc<span class="op">=</span><span class="st">'upper right'</span>, fontsize<span class="op">=</span><span class="st">'small'</span>)</span>
+<span id="cb1-108"><a href="#cb1-108" aria-hidden="true" tabindex="-1"></a>    plt.grid(<span class="va">True</span>)</span>
+<span id="cb1-109"><a href="#cb1-109" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-110"><a href="#cb1-110" aria-hidden="true" tabindex="-1"></a>    <span class="co"># ===== PLOT 5: 3D Visualization (Multiple channels over time and frequency) =====</span></span>
+<span id="cb1-111"><a href="#cb1-111" aria-hidden="true" tabindex="-1"></a>    plt.subplot(<span class="dv">5</span>, <span class="dv">1</span>, <span class="dv">5</span>, projection<span class="op">=</span><span class="st">'3d'</span>)</span>
+<span id="cb1-112"><a href="#cb1-112" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-113"><a href="#cb1-113" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Select a subset of channels for clarity</span></span>
+<span id="cb1-114"><a href="#cb1-114" aria-hidden="true" tabindex="-1"></a>    channels_to_plot <span class="op">=</span> <span class="bu">min</span>(<span class="dv">5</span>, n_channels)</span>
+<span id="cb1-115"><a href="#cb1-115" aria-hidden="true" tabindex="-1"></a>    channel_indices <span class="op">=</span> np.linspace(<span class="dv">0</span>, n_channels<span class="op">-</span><span class="dv">1</span>, channels_to_plot, dtype<span class="op">=</span><span class="bu">int</span>)</span>
+<span id="cb1-116"><a href="#cb1-116" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-117"><a href="#cb1-117" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, ch <span class="kw">in</span> <span class="bu">enumerate</span>(channel_indices):</span>
+<span id="cb1-118"><a href="#cb1-118" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Calculate spectrogram</span></span>
+<span id="cb1-119"><a href="#cb1-119" aria-hidden="true" tabindex="-1"></a>        f, t, Sxx <span class="op">=</span> spectrogram(audio_data_np[:num_samples, ch], fs<span class="op">=</span>expected_sample_rate, nperseg<span class="op">=</span><span class="dv">1024</span>)</span>
+<span id="cb1-120"><a href="#cb1-120" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-121"><a href="#cb1-121" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Downsample for visualization</span></span>
+<span id="cb1-122"><a href="#cb1-122" aria-hidden="true" tabindex="-1"></a>        freq_step <span class="op">=</span> <span class="bu">max</span>(<span class="dv">1</span>, <span class="bu">len</span>(f) <span class="op">//</span> <span class="dv">50</span>)</span>
+<span id="cb1-123"><a href="#cb1-123" aria-hidden="true" tabindex="-1"></a>        time_step <span class="op">=</span> <span class="bu">max</span>(<span class="dv">1</span>, <span class="bu">len</span>(t) <span class="op">//</span> <span class="dv">50</span>)</span>
+<span id="cb1-124"><a href="#cb1-124" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-125"><a href="#cb1-125" aria-hidden="true" tabindex="-1"></a>        f_downsample <span class="op">=</span> f[::freq_step]</span>
+<span id="cb1-126"><a href="#cb1-126" aria-hidden="true" tabindex="-1"></a>        t_downsample <span class="op">=</span> t[::time_step]</span>
+<span id="cb1-127"><a href="#cb1-127" aria-hidden="true" tabindex="-1"></a>        Sxx_downsample <span class="op">=</span> Sxx[::freq_step, ::time_step]</span>
+<span id="cb1-128"><a href="#cb1-128" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-129"><a href="#cb1-129" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Convert to dB for better visualization</span></span>
+<span id="cb1-130"><a href="#cb1-130" aria-hidden="true" tabindex="-1"></a>        Sxx_db <span class="op">=</span> <span class="dv">10</span> <span class="op">*</span> np.log10(Sxx_downsample <span class="op">+</span> <span class="fl">1e-10</span>)</span>
+<span id="cb1-131"><a href="#cb1-131" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-132"><a href="#cb1-132" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create meshgrid for 3D plot</span></span>
+<span id="cb1-133"><a href="#cb1-133" aria-hidden="true" tabindex="-1"></a>        T, F <span class="op">=</span> np.meshgrid(t_downsample, f_downsample)</span>
+<span id="cb1-134"><a href="#cb1-134" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-135"><a href="#cb1-135" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot as surface with offset based on channel number</span></span>
+<span id="cb1-136"><a href="#cb1-136" aria-hidden="true" tabindex="-1"></a>        offset <span class="op">=</span> i <span class="op">*</span> <span class="dv">20</span>  <span class="co"># Offset each channel for visibility</span></span>
+<span id="cb1-137"><a href="#cb1-137" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> plt.gca()</span>
+<span id="cb1-138"><a href="#cb1-138" aria-hidden="true" tabindex="-1"></a>        surf <span class="op">=</span> ax.plot_surface(T, F, Sxx_db <span class="op">+</span> offset, cmap<span class="op">=</span><span class="st">'viridis'</span>, alpha<span class="op">=</span><span class="fl">0.7</span>)</span>
+<span id="cb1-139"><a href="#cb1-139" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-140"><a href="#cb1-140" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">'3D Spectrogram Comparison (Multiple Channels)'</span>)</span>
+<span id="cb1-141"><a href="#cb1-141" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">'Time (s)'</span>)</span>
+<span id="cb1-142"><a href="#cb1-142" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">'Frequency (Hz)'</span>)</span>
+<span id="cb1-143"><a href="#cb1-143" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-144"><a href="#cb1-144" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Add custom legend for channels</span></span>
+<span id="cb1-145"><a href="#cb1-145" aria-hidden="true" tabindex="-1"></a>    <span class="im">from</span> matplotlib.lines <span class="im">import</span> Line2D</span>
+<span id="cb1-146"><a href="#cb1-146" aria-hidden="true" tabindex="-1"></a>    legend_elements <span class="op">=</span> []</span>
+<span id="cb1-147"><a href="#cb1-147" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, ch <span class="kw">in</span> <span class="bu">enumerate</span>(channel_indices):</span>
+<span id="cb1-148"><a href="#cb1-148" aria-hidden="true" tabindex="-1"></a>        legend_elements.append(Line2D([<span class="dv">0</span>], [<span class="dv">0</span>], color<span class="op">=</span>plt.cm.viridis(i<span class="op">/</span>channels_to_plot), lw<span class="op">=</span><span class="dv">4</span>, label<span class="op">=</span><span class="ss">f'Channel </span><span class="sc">{</span>ch<span class="sc">}</span><span class="ss">'</span>))</span>
+<span id="cb1-149"><a href="#cb1-149" aria-hidden="true" tabindex="-1"></a>    ax.legend(handles<span class="op">=</span>legend_elements, loc<span class="op">=</span><span class="st">'upper right'</span>)</span>
+<span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
+<span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>    plt.savefig(<span class="st">'audio_visualization.png'</span>, dpi<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
+<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Spatial audio visualization (if this is a 16-channel UMA-16V2 array)</span></span>
+<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> n_channels <span class="op">&gt;=</span> <span class="dv">16</span> <span class="kw">and</span> metadata[<span class="st">'audio_sensor_name'</span>] <span class="op">==</span> <span class="st">'UMA-16V2 USB Mic Array'</span>:</span>
+<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>        plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">10</span>))</span>
+<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Assume a circular microphone array with 16 channels</span></span>
+<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot the energy distribution in a polar coordinate system</span></span>
+<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Calculate average energy for each channel over time</span></span>
+<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>        avg_energy <span class="op">=</span> [np.mean(energy) <span class="cf">for</span> energy <span class="kw">in</span> channel_energies]</span>
+<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Normalize for visualization</span></span>
+<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>        normalized_energy <span class="op">=</span> np.array(avg_energy) <span class="op">/</span> <span class="bu">max</span>(avg_energy)</span>
+<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create angles for the circular array (UMA-16V2 has 16 mics arranged in a circle)</span></span>
+<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>        angles <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">2</span><span class="op">*</span>np.pi, n_channels, endpoint<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot in polar coordinates</span></span>
+<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> plt.subplot(<span class="dv">111</span>, polar<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a>        ax.fill(angles, normalized_energy, alpha<span class="op">=</span><span class="fl">0.25</span>)</span>
+<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>        ax.plot(angles, normalized_energy, <span class="st">'o-'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Make the plot circular by connecting back to the first point</span></span>
+<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>        angles_closed <span class="op">=</span> np.append(angles, angles[<span class="dv">0</span>])</span>
+<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>        energy_closed <span class="op">=</span> np.append(normalized_energy, normalized_energy[<span class="dv">0</span>])</span>
+<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>        ax.plot(angles_closed, energy_closed, <span class="st">'o-'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
+<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Add channel numbers</span></span>
+<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_channels):</span>
+<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a>            ax.text(angles[i], normalized_energy[i] <span class="op">+</span> <span class="fl">0.1</span>, <span class="ss">f'</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">'</span>, </span>
+<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a>                   horizontalalignment<span class="op">=</span><span class="st">'center'</span>, verticalalignment<span class="op">=</span><span class="st">'center'</span>)</span>
+<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a>        plt.title(<span class="st">'Spatial Energy Distribution (UMA-16V2 Array)'</span>)</span>
+<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>        plt.tight_layout()</span>
+<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a>        plt.savefig(<span class="st">'spatial_distribution.png'</span>, dpi<span class="op">=</span><span class="dv">300</span>)</span>
+<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a>        plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Sample rate: 44100 Hz
+Audio data shape: (882000, 16)
+Analyzing 20 seconds (882000 samples)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="single_cap_files/figure-html/cell-2-output-2.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="single_cap_files/figure-html/cell-2-output-3.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="single_cap_files/figure-html/cell-2-output-4.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+<section id="training-acoustic-model" class="level1">
+<h1>Training Acoustic Model</h1>
+<section id="data-preprocessing-pipeline" class="level2">
+<h2 class="anchored" data-anchor-id="data-preprocessing-pipeline">Data Preprocessing Pipeline</h2>
+<p>The acoustic model processes audio data through several key steps before training:</p>
+<section id="input-format-transformation" class="level3">
+<h3 class="anchored" data-anchor-id="input-format-transformation">1. Input Format Transformation</h3>
+<ul>
+<li><strong>Spectrograms</strong> are used as input instead of raw audio signals</li>
+<li>Spectrograms provide frequency-domain representation that better captures acoustic patterns</li>
+</ul>
+</section>
+<section id="audio-signal-resampling" class="level3">
+<h3 class="anchored" data-anchor-id="audio-signal-resampling">2. Audio Signal Resampling</h3>
+<ul>
+<li>All six microphone channels are <strong>resampled to 48kHz</strong></li>
+<li>This ensures uniform sample rate across all audio inputs</li>
+<li>Consistent sample rate is critical for model training stability</li>
+</ul>
+</section>
+<section id="temporal-segmentation" class="level3">
+<h3 class="anchored" data-anchor-id="temporal-segmentation">3. Temporal Segmentation</h3>
+<ul>
+<li>Each channel’s audio stream is divided into <strong>1-second chunks</strong></li>
+<li>These chunks are further subdivided into <strong>30 segments</strong></li>
+<li>Each segment corresponds to a single frame from the synchronized video data</li>
+<li>This creates time-aligned audio-visual data pairs</li>
+</ul>
+</section>
+<section id="spectrogram-generation" class="level3">
+<h3 class="anchored" data-anchor-id="spectrogram-generation">4. Spectrogram Generation</h3>
+<ul>
+<li><strong>Short-Time Fourier Transform (STFT)</strong> is applied to each audio segment</li>
+<li>STFT parameters:
+<ul>
+<li><strong>Hamming window function</strong> for better frequency resolution</li>
+<li><strong>Window size of 512 samples</strong></li>
+<li><strong>4 hops</strong> per window (hop length = 128 samples)</li>
+</ul></li>
+<li>This configuration yields spectrograms with dimensions <strong>[257×273]</strong>
+<ul>
+<li>257 frequency bins</li>
+<li>273 time frames</li>
+</ul></li>
+</ul>
+</section>
+<section id="channel-stacking" class="level3">
+<h3 class="anchored" data-anchor-id="channel-stacking">5. Channel Stacking</h3>
+<ul>
+<li>Spectrograms from all 6 channels for each segment are <strong>stacked together</strong></li>
+<li>This preserves spatial audio information from the microphone array</li>
+<li>The resulting multi-channel spectrograms serve as input to the neural network</li>
+</ul>
+<div id="cell-4" class="cell" data-execution_count="36">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> librosa</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> librosa.display</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> scipy <span class="im">import</span> signal</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Configuration</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>cfg <span class="op">=</span> {</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>    <span class="st">'metadata_local_path_str'</span>: <span class="st">'/home/grace/Develop/ziz/2025-04-21_19-08-01_Session1_MJ_Brown Building Apartments_Sunny/metadata.json'</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_waveform(audio_data, sr, title, ax):</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Plot a waveform of audio data."""</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    librosa.display.waveshow(audio_data, sr<span class="op">=</span>sr, ax<span class="op">=</span>ax)</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    ax.set_title(title)</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="st">"Time (s)"</span>)</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    ax.set_ylabel(<span class="st">"Amplitude"</span>)</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> plot_spectrogram(spectrogram, title, ax):</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Plot a spectrogram."""</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>    librosa.display.specshow(librosa.amplitude_to_db(spectrogram, ref<span class="op">=</span>np.<span class="bu">max</span>),</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>                             y_axis<span class="op">=</span><span class="st">'log'</span>, x_axis<span class="op">=</span><span class="st">'time'</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    ax.set_title(title)</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="st">"Time (frames)"</span>)</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    ax.set_ylabel(<span class="st">"Frequency (Hz)"</span>)</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>    plt.colorbar(ax.collections[<span class="dv">0</span>], ax<span class="op">=</span>ax, <span class="bu">format</span><span class="op">=</span><span class="st">'%+2.0f dB'</span>)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="va">__name__</span> <span class="op">==</span> <span class="st">'__main__'</span>:</span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Open and read the metadata file</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>    metadata_json <span class="op">=</span> Path(cfg[<span class="st">'metadata_local_path_str'</span>])</span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>    local_path <span class="op">=</span> metadata_json.parent</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>    <span class="cf">with</span> metadata_json.<span class="bu">open</span>(<span class="st">'r'</span>) <span class="im">as</span> f:</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>        metadata <span class="op">=</span> json.load(f)</span>
+<span id="cb3-38"><a href="#cb3-38" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-39"><a href="#cb3-39" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Collect audio chunk paths</span></span>
+<span id="cb3-40"><a href="#cb3-40" aria-hidden="true" tabindex="-1"></a>    audio_chunks_over_time <span class="op">=</span> []</span>
+<span id="cb3-41"><a href="#cb3-41" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> audio_metadata <span class="kw">in</span> metadata[<span class="st">'audio_chunks_timestamps'</span>]:</span>
+<span id="cb3-42"><a href="#cb3-42" aria-hidden="true" tabindex="-1"></a>        orig_path <span class="op">=</span> Path(audio_metadata[<span class="st">'file_name'</span>])</span>
+<span id="cb3-43"><a href="#cb3-43" aria-hidden="true" tabindex="-1"></a>        last_two <span class="op">=</span> orig_path.parts[<span class="op">-</span><span class="dv">2</span>:]</span>
+<span id="cb3-44"><a href="#cb3-44" aria-hidden="true" tabindex="-1"></a>        audio_path <span class="op">=</span> local_path.joinpath(<span class="op">*</span>last_two)</span>
+<span id="cb3-45"><a href="#cb3-45" aria-hidden="true" tabindex="-1"></a>        audio_chunks_over_time.append(audio_path)</span>
+<span id="cb3-46"><a href="#cb3-46" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-47"><a href="#cb3-47" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Load the first audio chunk</span></span>
+<span id="cb3-48"><a href="#cb3-48" aria-hidden="true" tabindex="-1"></a>    idx <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb3-49"><a href="#cb3-49" aria-hidden="true" tabindex="-1"></a>    audio_data_np <span class="op">=</span> np.load(audio_chunks_over_time[idx])  <span class="co"># shape: (n_samples, n_channels)</span></span>
+<span id="cb3-50"><a href="#cb3-50" aria-hidden="true" tabindex="-1"></a>    original_sample_rate <span class="op">=</span> <span class="bu">int</span>(metadata[<span class="st">'sound_card_sample_rate'</span>])</span>
+<span id="cb3-51"><a href="#cb3-51" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Original sample rate: </span><span class="sc">{</span>original_sample_rate<span class="sc">}</span><span class="ss"> Hz'</span>)</span>
+<span id="cb3-52"><a href="#cb3-52" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Audio data shape: </span><span class="sc">{</span>audio_data_np<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb3-53"><a href="#cb3-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-54"><a href="#cb3-54" aria-hidden="true" tabindex="-1"></a>    <span class="co"># According to instructions, we should use 6 channels</span></span>
+<span id="cb3-55"><a href="#cb3-55" aria-hidden="true" tabindex="-1"></a>    <span class="co"># If there are more, we'll take the first 6</span></span>
+<span id="cb3-56"><a href="#cb3-56" aria-hidden="true" tabindex="-1"></a>    num_channels <span class="op">=</span> <span class="bu">min</span>(<span class="dv">6</span>, audio_data_np.shape[<span class="dv">1</span>])</span>
+<span id="cb3-57"><a href="#cb3-57" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-58"><a href="#cb3-58" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a figure for the full preprocessing pipeline</span></span>
+<span id="cb3-59"><a href="#cb3-59" aria-hidden="true" tabindex="-1"></a>    fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">15</span>, <span class="dv">25</span>))</span>
+<span id="cb3-60"><a href="#cb3-60" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-61"><a href="#cb3-61" aria-hidden="true" tabindex="-1"></a>    <span class="co"># STEP 1: Original audio waveform for each channel</span></span>
+<span id="cb3-62"><a href="#cb3-62" aria-hidden="true" tabindex="-1"></a>    orig_axes <span class="op">=</span> []</span>
+<span id="cb3-63"><a href="#cb3-63" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ch <span class="kw">in</span> <span class="bu">range</span>(num_channels):</span>
+<span id="cb3-64"><a href="#cb3-64" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> plt.subplot(num_channels, <span class="dv">3</span>, ch<span class="op">*</span><span class="dv">3</span> <span class="op">+</span> <span class="dv">1</span>)</span>
+<span id="cb3-65"><a href="#cb3-65" aria-hidden="true" tabindex="-1"></a>        plot_waveform(audio_data_np[:<span class="dv">5</span><span class="op">*</span>original_sample_rate, ch], original_sample_rate, </span>
+<span id="cb3-66"><a href="#cb3-66" aria-hidden="true" tabindex="-1"></a>                     <span class="ss">f"Original Channel </span><span class="sc">{</span>ch<span class="sc">}</span><span class="ss"> Waveform (First 5s)"</span>, ax)</span>
+<span id="cb3-67"><a href="#cb3-67" aria-hidden="true" tabindex="-1"></a>        orig_axes.append(ax)</span>
+<span id="cb3-68"><a href="#cb3-68" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-69"><a href="#cb3-69" aria-hidden="true" tabindex="-1"></a>    <span class="co"># STEP 2: Resample to 48kHz</span></span>
+<span id="cb3-70"><a href="#cb3-70" aria-hidden="true" tabindex="-1"></a>    target_sample_rate <span class="op">=</span> <span class="dv">48000</span></span>
+<span id="cb3-71"><a href="#cb3-71" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-72"><a href="#cb3-72" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Don't pre-allocate with fixed size - resample each channel first, then stack</span></span>
+<span id="cb3-73"><a href="#cb3-73" aria-hidden="true" tabindex="-1"></a>    resampled_channels <span class="op">=</span> []</span>
+<span id="cb3-74"><a href="#cb3-74" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-75"><a href="#cb3-75" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ch <span class="kw">in</span> <span class="bu">range</span>(num_channels):</span>
+<span id="cb3-76"><a href="#cb3-76" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Resample each channel individually</span></span>
+<span id="cb3-77"><a href="#cb3-77" aria-hidden="true" tabindex="-1"></a>        resampled_channel <span class="op">=</span> librosa.resample(</span>
+<span id="cb3-78"><a href="#cb3-78" aria-hidden="true" tabindex="-1"></a>            audio_data_np[:, ch], </span>
+<span id="cb3-79"><a href="#cb3-79" aria-hidden="true" tabindex="-1"></a>            orig_sr<span class="op">=</span>original_sample_rate, </span>
+<span id="cb3-80"><a href="#cb3-80" aria-hidden="true" tabindex="-1"></a>            target_sr<span class="op">=</span>target_sample_rate</span>
+<span id="cb3-81"><a href="#cb3-81" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-82"><a href="#cb3-82" aria-hidden="true" tabindex="-1"></a>        resampled_channels.append(resampled_channel)</span>
+<span id="cb3-83"><a href="#cb3-83" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-84"><a href="#cb3-84" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Find the minimum length (to handle any potential length differences)</span></span>
+<span id="cb3-85"><a href="#cb3-85" aria-hidden="true" tabindex="-1"></a>    min_length <span class="op">=</span> <span class="bu">min</span>(<span class="bu">len</span>(channel) <span class="cf">for</span> channel <span class="kw">in</span> resampled_channels)</span>
+<span id="cb3-86"><a href="#cb3-86" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-87"><a href="#cb3-87" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create the final array with consistent dimensions</span></span>
+<span id="cb3-88"><a href="#cb3-88" aria-hidden="true" tabindex="-1"></a>    resampled_audio <span class="op">=</span> np.zeros((min_length, num_channels))</span>
+<span id="cb3-89"><a href="#cb3-89" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ch <span class="kw">in</span> <span class="bu">range</span>(num_channels):</span>
+<span id="cb3-90"><a href="#cb3-90" aria-hidden="true" tabindex="-1"></a>        resampled_audio[:, ch] <span class="op">=</span> resampled_channels[ch][:min_length]</span>
+<span id="cb3-91"><a href="#cb3-91" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-92"><a href="#cb3-92" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f'Resampled audio shape: </span><span class="sc">{</span>resampled_audio<span class="sc">.</span>shape<span class="sc">}</span><span class="ss">'</span>)</span>
+<span id="cb3-93"><a href="#cb3-93" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-94"><a href="#cb3-94" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Plot resampled waveforms</span></span>
+<span id="cb3-95"><a href="#cb3-95" aria-hidden="true" tabindex="-1"></a>    resampled_axes <span class="op">=</span> []</span>
+<span id="cb3-96"><a href="#cb3-96" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ch <span class="kw">in</span> <span class="bu">range</span>(num_channels):</span>
+<span id="cb3-97"><a href="#cb3-97" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> plt.subplot(num_channels, <span class="dv">3</span>, ch<span class="op">*</span><span class="dv">3</span> <span class="op">+</span> <span class="dv">2</span>)</span>
+<span id="cb3-98"><a href="#cb3-98" aria-hidden="true" tabindex="-1"></a>        plot_waveform(resampled_audio[:<span class="dv">5</span><span class="op">*</span>target_sample_rate, ch], target_sample_rate, </span>
+<span id="cb3-99"><a href="#cb3-99" aria-hidden="true" tabindex="-1"></a>                     <span class="ss">f"Resampled Channel </span><span class="sc">{</span>ch<span class="sc">}</span><span class="ss"> Waveform (First 5s)"</span>, ax)</span>
+<span id="cb3-100"><a href="#cb3-100" aria-hidden="true" tabindex="-1"></a>        resampled_axes.append(ax)</span>
+<span id="cb3-101"><a href="#cb3-101" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-102"><a href="#cb3-102" aria-hidden="true" tabindex="-1"></a>    <span class="co"># STEP 3: Divide into 1s chunks and compute spectrograms</span></span>
+<span id="cb3-103"><a href="#cb3-103" aria-hidden="true" tabindex="-1"></a>    chunk_duration <span class="op">=</span> <span class="dv">1</span>  <span class="co"># 1 second chunks</span></span>
+<span id="cb3-104"><a href="#cb3-104" aria-hidden="true" tabindex="-1"></a>    samples_per_chunk <span class="op">=</span> target_sample_rate <span class="op">*</span> chunk_duration</span>
+<span id="cb3-105"><a href="#cb3-105" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-106"><a href="#cb3-106" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Select the first chunk for demonstration</span></span>
+<span id="cb3-107"><a href="#cb3-107" aria-hidden="true" tabindex="-1"></a>    first_chunk <span class="op">=</span> resampled_audio[:samples_per_chunk, :]</span>
+<span id="cb3-108"><a href="#cb3-108" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-109"><a href="#cb3-109" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Set STFT parameters as specified</span></span>
+<span id="cb3-110"><a href="#cb3-110" aria-hidden="true" tabindex="-1"></a>    n_fft <span class="op">=</span> <span class="dv">512</span>  <span class="co"># Window size</span></span>
+<span id="cb3-111"><a href="#cb3-111" aria-hidden="true" tabindex="-1"></a>    hop_length <span class="op">=</span> n_fft <span class="op">//</span> <span class="dv">4</span>  <span class="co"># 4 Hops as specified</span></span>
+<span id="cb3-112"><a href="#cb3-112" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-113"><a href="#cb3-113" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Compute and display spectrograms for each channel</span></span>
+<span id="cb3-114"><a href="#cb3-114" aria-hidden="true" tabindex="-1"></a>    spec_axes <span class="op">=</span> []</span>
+<span id="cb3-115"><a href="#cb3-115" aria-hidden="true" tabindex="-1"></a>    spectrograms <span class="op">=</span> []</span>
+<span id="cb3-116"><a href="#cb3-116" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-117"><a href="#cb3-117" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ch <span class="kw">in</span> <span class="bu">range</span>(num_channels):</span>
+<span id="cb3-118"><a href="#cb3-118" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Apply STFT with Hamming window</span></span>
+<span id="cb3-119"><a href="#cb3-119" aria-hidden="true" tabindex="-1"></a>        spectrogram <span class="op">=</span> librosa.stft(</span>
+<span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>            first_chunk[:, ch], </span>
+<span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>            n_fft<span class="op">=</span>n_fft, </span>
+<span id="cb3-122"><a href="#cb3-122" aria-hidden="true" tabindex="-1"></a>            hop_length<span class="op">=</span>hop_length, </span>
+<span id="cb3-123"><a href="#cb3-123" aria-hidden="true" tabindex="-1"></a>            window<span class="op">=</span><span class="st">'hamming'</span></span>
+<span id="cb3-124"><a href="#cb3-124" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-125"><a href="#cb3-125" aria-hidden="true" tabindex="-1"></a>        spectrograms.append(spectrogram)</span>
+<span id="cb3-126"><a href="#cb3-126" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-127"><a href="#cb3-127" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot spectrogram</span></span>
+<span id="cb3-128"><a href="#cb3-128" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> plt.subplot(num_channels, <span class="dv">3</span>, ch<span class="op">*</span><span class="dv">3</span> <span class="op">+</span> <span class="dv">3</span>)</span>
+<span id="cb3-129"><a href="#cb3-129" aria-hidden="true" tabindex="-1"></a>        plot_spectrogram(spectrogram, <span class="ss">f"Spectrogram Channel </span><span class="sc">{</span>ch<span class="sc">}</span><span class="ss"> (1s chunk)"</span>, ax)</span>
+<span id="cb3-130"><a href="#cb3-130" aria-hidden="true" tabindex="-1"></a>        spec_axes.append(ax)</span>
+<span id="cb3-131"><a href="#cb3-131" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-132"><a href="#cb3-132" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
+<span id="cb3-133"><a href="#cb3-133" aria-hidden="true" tabindex="-1"></a>    <span class="co"># plt.savefig('preprocessing_visualization.png', dpi=300)</span></span>
+<span id="cb3-134"><a href="#cb3-134" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-135"><a href="#cb3-135" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Create a new figure to show the stacked spectrograms (input to the model)</span></span>
+<span id="cb3-136"><a href="#cb3-136" aria-hidden="true" tabindex="-1"></a>    plt.figure(figsize<span class="op">=</span>(<span class="dv">12</span>, <span class="dv">10</span>))</span>
+<span id="cb3-137"><a href="#cb3-137" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-138"><a href="#cb3-138" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Stack spectrograms and visualize</span></span>
+<span id="cb3-139"><a href="#cb3-139" aria-hidden="true" tabindex="-1"></a>    <span class="co"># First, convert to magnitude spectrograms</span></span>
+<span id="cb3-140"><a href="#cb3-140" aria-hidden="true" tabindex="-1"></a>    mag_specs <span class="op">=</span> [np.<span class="bu">abs</span>(spec) <span class="cf">for</span> spec <span class="kw">in</span> spectrograms]</span>
+<span id="cb3-141"><a href="#cb3-141" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-142"><a href="#cb3-142" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Check the shape</span></span>
+<span id="cb3-143"><a href="#cb3-143" aria-hidden="true" tabindex="-1"></a>    first_spec_shape <span class="op">=</span> mag_specs[<span class="dv">0</span>].shape</span>
+<span id="cb3-144"><a href="#cb3-144" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="ss">f"Spectrogram shape: </span><span class="sc">{</span>first_spec_shape<span class="sc">}</span><span class="ss">"</span>)  <span class="co"># Should be close to [257×273]</span></span>
+<span id="cb3-145"><a href="#cb3-145" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-146"><a href="#cb3-146" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Visualize the stacked spectrograms as input to the model</span></span>
+<span id="cb3-147"><a href="#cb3-147" aria-hidden="true" tabindex="-1"></a>    <span class="co"># We'll create a grid of mini-spectrograms and then show a 3D representation</span></span>
+<span id="cb3-148"><a href="#cb3-148" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-149"><a href="#cb3-149" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 2D grid visualization</span></span>
+<span id="cb3-150"><a href="#cb3-150" aria-hidden="true" tabindex="-1"></a>    plt.subplot(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb3-151"><a href="#cb3-151" aria-hidden="true" tabindex="-1"></a>    combined_spec <span class="op">=</span> np.hstack(mag_specs)</span>
+<span id="cb3-152"><a href="#cb3-152" aria-hidden="true" tabindex="-1"></a>    librosa.display.specshow(</span>
+<span id="cb3-153"><a href="#cb3-153" aria-hidden="true" tabindex="-1"></a>        librosa.amplitude_to_db(combined_spec, ref<span class="op">=</span>np.<span class="bu">max</span>),</span>
+<span id="cb3-154"><a href="#cb3-154" aria-hidden="true" tabindex="-1"></a>        y_axis<span class="op">=</span><span class="st">'log'</span>, </span>
+<span id="cb3-155"><a href="#cb3-155" aria-hidden="true" tabindex="-1"></a>        x_axis<span class="op">=</span><span class="st">'time'</span></span>
+<span id="cb3-156"><a href="#cb3-156" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb3-157"><a href="#cb3-157" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">"Stacked Channel Spectrograms (Input to Model)"</span>)</span>
+<span id="cb3-158"><a href="#cb3-158" aria-hidden="true" tabindex="-1"></a>    plt.xlabel(<span class="st">"Time (frames) × Channels"</span>)</span>
+<span id="cb3-159"><a href="#cb3-159" aria-hidden="true" tabindex="-1"></a>    plt.ylabel(<span class="st">"Frequency (Hz)"</span>)</span>
+<span id="cb3-160"><a href="#cb3-160" aria-hidden="true" tabindex="-1"></a>    plt.colorbar(<span class="bu">format</span><span class="op">=</span><span class="st">'%+2.0f dB'</span>)</span>
+<span id="cb3-161"><a href="#cb3-161" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-162"><a href="#cb3-162" aria-hidden="true" tabindex="-1"></a>    <span class="co"># 3D visualization of the stacked spectrograms</span></span>
+<span id="cb3-163"><a href="#cb3-163" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> plt.subplot(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>, projection<span class="op">=</span><span class="st">'3d'</span>)</span>
+<span id="cb3-164"><a href="#cb3-164" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-165"><a href="#cb3-165" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ch <span class="kw">in</span> <span class="bu">range</span>(num_channels):</span>
+<span id="cb3-166"><a href="#cb3-166" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Get the spectrogram for this channel</span></span>
+<span id="cb3-167"><a href="#cb3-167" aria-hidden="true" tabindex="-1"></a>        spec <span class="op">=</span> librosa.amplitude_to_db(mag_specs[ch], ref<span class="op">=</span>np.<span class="bu">max</span>)</span>
+<span id="cb3-168"><a href="#cb3-168" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-169"><a href="#cb3-169" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Downsample for visualization clarity</span></span>
+<span id="cb3-170"><a href="#cb3-170" aria-hidden="true" tabindex="-1"></a>        freq_step <span class="op">=</span> <span class="bu">max</span>(<span class="dv">1</span>, spec.shape[<span class="dv">0</span>] <span class="op">//</span> <span class="dv">50</span>)</span>
+<span id="cb3-171"><a href="#cb3-171" aria-hidden="true" tabindex="-1"></a>        time_step <span class="op">=</span> <span class="bu">max</span>(<span class="dv">1</span>, spec.shape[<span class="dv">1</span>] <span class="op">//</span> <span class="dv">50</span>)</span>
+<span id="cb3-172"><a href="#cb3-172" aria-hidden="true" tabindex="-1"></a>        spec_downsampled <span class="op">=</span> spec[::freq_step, ::time_step]</span>
+<span id="cb3-173"><a href="#cb3-173" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-174"><a href="#cb3-174" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create a meshgrid</span></span>
+<span id="cb3-175"><a href="#cb3-175" aria-hidden="true" tabindex="-1"></a>        x, y <span class="op">=</span> np.meshgrid(</span>
+<span id="cb3-176"><a href="#cb3-176" aria-hidden="true" tabindex="-1"></a>            np.arange(<span class="dv">0</span>, spec_downsampled.shape[<span class="dv">1</span>]),</span>
+<span id="cb3-177"><a href="#cb3-177" aria-hidden="true" tabindex="-1"></a>            np.arange(<span class="dv">0</span>, spec_downsampled.shape[<span class="dv">0</span>])</span>
+<span id="cb3-178"><a href="#cb3-178" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-179"><a href="#cb3-179" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-180"><a href="#cb3-180" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Add channel offset for 3D visualization</span></span>
+<span id="cb3-181"><a href="#cb3-181" aria-hidden="true" tabindex="-1"></a>        x <span class="op">=</span> x <span class="op">+</span> ch <span class="op">*</span> (spec_downsampled.shape[<span class="dv">1</span>] <span class="op">+</span> <span class="dv">5</span>)</span>
+<span id="cb3-182"><a href="#cb3-182" aria-hidden="true" tabindex="-1"></a>        </span>
+<span id="cb3-183"><a href="#cb3-183" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot as a surface</span></span>
+<span id="cb3-184"><a href="#cb3-184" aria-hidden="true" tabindex="-1"></a>        surf <span class="op">=</span> ax.plot_surface(</span>
+<span id="cb3-185"><a href="#cb3-185" aria-hidden="true" tabindex="-1"></a>            x, y, spec_downsampled,</span>
+<span id="cb3-186"><a href="#cb3-186" aria-hidden="true" tabindex="-1"></a>            cmap<span class="op">=</span>plt.cm.viridis,</span>
+<span id="cb3-187"><a href="#cb3-187" aria-hidden="true" tabindex="-1"></a>            alpha<span class="op">=</span><span class="fl">0.7</span></span>
+<span id="cb3-188"><a href="#cb3-188" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb3-189"><a href="#cb3-189" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-190"><a href="#cb3-190" aria-hidden="true" tabindex="-1"></a>    ax.set_title(<span class="st">"3D View of Stacked Spectrograms"</span>)</span>
+<span id="cb3-191"><a href="#cb3-191" aria-hidden="true" tabindex="-1"></a>    ax.set_xlabel(<span class="st">"Time (frames) × Channels"</span>)</span>
+<span id="cb3-192"><a href="#cb3-192" aria-hidden="true" tabindex="-1"></a>    ax.set_ylabel(<span class="st">"Frequency Bins"</span>)</span>
+<span id="cb3-193"><a href="#cb3-193" aria-hidden="true" tabindex="-1"></a>    ax.set_zlabel(<span class="st">"Magnitude (dB)"</span>)</span>
+<span id="cb3-194"><a href="#cb3-194" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb3-195"><a href="#cb3-195" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
+<span id="cb3-196"><a href="#cb3-196" aria-hidden="true" tabindex="-1"></a>    <span class="co"># plt.savefig('stacked_spectrograms_input.png', dpi=300)</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Original sample rate: 44100 Hz
+Audio data shape: (882000, 16)
+Resampled audio shape: (960001, 6)</code></pre>
+</div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/tmp/ipykernel_2043719/2917106236.py:24: UserWarning: amplitude_to_db was called on complex input so phase information will be discarded. To suppress this warning, call amplitude_to_db(np.abs(S)) instead.
+  librosa.display.specshow(librosa.amplitude_to_db(spectrogram, ref=np.max),</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Spectrogram shape: (257, 376)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="single_cap_files/figure-html/cell-3-output-4.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="single_cap_files/figure-html/cell-3-output-5.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+</section>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const onCopySuccess = function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  }
+  const getTextToCopy = function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+    text: getTextToCopy
+  });
+  clipboard.on('success', onCopySuccess);
+  if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+    const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+      text: getTextToCopy,
+      container: window.document.getElementById('quarto-embedded-source-code-modal')
+    });
+    clipboardModal.on('success', onCopySuccess);
+  }
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp('/' + window.location.host + '/');
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
