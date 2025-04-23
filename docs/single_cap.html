@@ -133,8 +133,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="multi-channel-audio-visualization-pipeline" class="level1">
-<h1>Multi-Channel Audio Visualization Pipeline</h1>
+<section id="multi-channel-audio-visualization" class="level1">
+<h1>Multi-Channel Audio Visualization</h1>
 <section id="data-loading-and-preparation" class="level2">
 <h2 class="anchored" data-anchor-id="data-loading-and-preparation">Data Loading and Preparation</h2>
 <ul>
@@ -200,12 +200,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Visualizes the directional characteristics of the sound field</li>
 <li>Helps identify direction of arrival for sound sources</li>
 </ul>
-</section>
-</section>
-<section id="applications" class="level2">
-<h2 class="anchored" data-anchor-id="applications">Applications</h2>
-<p>This visualization pipeline is particularly valuable for: - Analyzing drone acoustic signatures - Spatial audio research - Sound source localization - Microphone array performance evaluation - Environmental sound monitoring</p>
-<div id="cell-2" class="cell" data-execution_count="2">
+<div id="cell-2" class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -358,44 +353,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-150"><a href="#cb1-150" aria-hidden="true" tabindex="-1"></a>    </span>
 <span id="cb1-151"><a href="#cb1-151" aria-hidden="true" tabindex="-1"></a>    plt.tight_layout()</span>
 <span id="cb1-152"><a href="#cb1-152" aria-hidden="true" tabindex="-1"></a>    plt.savefig(<span class="st">'audio_visualization.png'</span>, dpi<span class="op">=</span><span class="dv">300</span>)</span>
-<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>    plt.show()</span>
-<span id="cb1-154"><a href="#cb1-154" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-155"><a href="#cb1-155" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb1-156"><a href="#cb1-156" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Spatial audio visualization (if this is a 16-channel UMA-16V2 array)</span></span>
-<span id="cb1-157"><a href="#cb1-157" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> n_channels <span class="op">&gt;=</span> <span class="dv">16</span> <span class="kw">and</span> metadata[<span class="st">'audio_sensor_name'</span>] <span class="op">==</span> <span class="st">'UMA-16V2 USB Mic Array'</span>:</span>
-<span id="cb1-158"><a href="#cb1-158" aria-hidden="true" tabindex="-1"></a>        plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">10</span>))</span>
-<span id="cb1-159"><a href="#cb1-159" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-160"><a href="#cb1-160" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Assume a circular microphone array with 16 channels</span></span>
-<span id="cb1-161"><a href="#cb1-161" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot the energy distribution in a polar coordinate system</span></span>
-<span id="cb1-162"><a href="#cb1-162" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-163"><a href="#cb1-163" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Calculate average energy for each channel over time</span></span>
-<span id="cb1-164"><a href="#cb1-164" aria-hidden="true" tabindex="-1"></a>        avg_energy <span class="op">=</span> [np.mean(energy) <span class="cf">for</span> energy <span class="kw">in</span> channel_energies]</span>
-<span id="cb1-165"><a href="#cb1-165" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-166"><a href="#cb1-166" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Normalize for visualization</span></span>
-<span id="cb1-167"><a href="#cb1-167" aria-hidden="true" tabindex="-1"></a>        normalized_energy <span class="op">=</span> np.array(avg_energy) <span class="op">/</span> <span class="bu">max</span>(avg_energy)</span>
-<span id="cb1-168"><a href="#cb1-168" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-169"><a href="#cb1-169" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Create angles for the circular array (UMA-16V2 has 16 mics arranged in a circle)</span></span>
-<span id="cb1-170"><a href="#cb1-170" aria-hidden="true" tabindex="-1"></a>        angles <span class="op">=</span> np.linspace(<span class="dv">0</span>, <span class="dv">2</span><span class="op">*</span>np.pi, n_channels, endpoint<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb1-171"><a href="#cb1-171" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-172"><a href="#cb1-172" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Plot in polar coordinates</span></span>
-<span id="cb1-173"><a href="#cb1-173" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> plt.subplot(<span class="dv">111</span>, polar<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb1-174"><a href="#cb1-174" aria-hidden="true" tabindex="-1"></a>        ax.fill(angles, normalized_energy, alpha<span class="op">=</span><span class="fl">0.25</span>)</span>
-<span id="cb1-175"><a href="#cb1-175" aria-hidden="true" tabindex="-1"></a>        ax.plot(angles, normalized_energy, <span class="st">'o-'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb1-176"><a href="#cb1-176" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-177"><a href="#cb1-177" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Make the plot circular by connecting back to the first point</span></span>
-<span id="cb1-178"><a href="#cb1-178" aria-hidden="true" tabindex="-1"></a>        angles_closed <span class="op">=</span> np.append(angles, angles[<span class="dv">0</span>])</span>
-<span id="cb1-179"><a href="#cb1-179" aria-hidden="true" tabindex="-1"></a>        energy_closed <span class="op">=</span> np.append(normalized_energy, normalized_energy[<span class="dv">0</span>])</span>
-<span id="cb1-180"><a href="#cb1-180" aria-hidden="true" tabindex="-1"></a>        ax.plot(angles_closed, energy_closed, <span class="st">'o-'</span>, linewidth<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb1-181"><a href="#cb1-181" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-182"><a href="#cb1-182" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Add channel numbers</span></span>
-<span id="cb1-183"><a href="#cb1-183" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n_channels):</span>
-<span id="cb1-184"><a href="#cb1-184" aria-hidden="true" tabindex="-1"></a>            ax.text(angles[i], normalized_energy[i] <span class="op">+</span> <span class="fl">0.1</span>, <span class="ss">f'</span><span class="sc">{</span>i<span class="sc">}</span><span class="ss">'</span>, </span>
-<span id="cb1-185"><a href="#cb1-185" aria-hidden="true" tabindex="-1"></a>                   horizontalalignment<span class="op">=</span><span class="st">'center'</span>, verticalalignment<span class="op">=</span><span class="st">'center'</span>)</span>
-<span id="cb1-186"><a href="#cb1-186" aria-hidden="true" tabindex="-1"></a>        </span>
-<span id="cb1-187"><a href="#cb1-187" aria-hidden="true" tabindex="-1"></a>        plt.title(<span class="st">'Spatial Energy Distribution (UMA-16V2 Array)'</span>)</span>
-<span id="cb1-188"><a href="#cb1-188" aria-hidden="true" tabindex="-1"></a>        plt.tight_layout()</span>
-<span id="cb1-189"><a href="#cb1-189" aria-hidden="true" tabindex="-1"></a>        plt.savefig(<span class="st">'spatial_distribution.png'</span>, dpi<span class="op">=</span><span class="dv">300</span>)</span>
-<span id="cb1-190"><a href="#cb1-190" aria-hidden="true" tabindex="-1"></a>        plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-153"><a href="#cb1-153" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Sample rate: 44100 Hz
 Audio data shape: (882000, 16)
@@ -408,14 +366,8 @@ Analyzing 20 seconds (882000 samples)</code></pre>
 </figure>
 </div>
 </div>
-<div class="cell-output cell-output-display">
-<div>
-<figure class="figure">
-<p><img src="single_cap_files/figure-html/cell-2-output-3.png" class="img-fluid figure-img"></p>
-</figure>
 </div>
-</div>
-</div>
+</section>
 </section>
 </section>
 <section id="training-acoustic-model" class="level1">
@@ -471,7 +423,7 @@ Analyzing 20 seconds (882000 samples)</code></pre>
 <li>This preserves spatial audio information from the microphone array</li>
 <li>The resulting multi-channel spectrograms serve as input to the neural network</li>
 </ul>
-<div id="cell-4" class="cell" data-execution_count="3">
+<div id="cell-4" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -695,9 +647,58 @@ Resampled audio shape: (960001, 6)</code></pre>
 </div>
 </div>
 </div>
-
-
 </section>
+</section>
+</section>
+<section id="potential-pipeline-tool-adios2" class="level1">
+<h1>Potential pipeline tool: ADIOS2</h1>
+<p>High performance I/O framework.</p>
+<p>Using this framework would favor real-time streaming of step-based audio data to multiple processing components with lower latency.</p>
+<p>(not sure how large the dataset will get)</p>
+<section id="example" class="level3">
+<h3 class="anchored" data-anchor-id="example">Example:</h3>
+<div id="cell-6" class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Producer (audio capture)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> adios2</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Initialize ADIOS2</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>adios <span class="op">=</span> adios2.ADIOS()</span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>io <span class="op">=</span> adios.DeclareIO(<span class="st">"DroneAudioStream"</span>)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>io.SetEngine(<span class="st">"SST"</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>io.SetParameters({<span class="st">"QueueLimit"</span>: <span class="st">"5"</span>, <span class="st">"DataTransport"</span>: <span class="st">"RDMA"</span>})</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Create audio variable (16 channels)</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>audio_var <span class="op">=</span> io.DefineVariable(<span class="st">"AudioData"</span>, </span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>                             shape<span class="op">=</span>[chunk_samples, <span class="dv">16</span>], </span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>                             start<span class="op">=</span>[<span class="dv">0</span>, <span class="dv">0</span>],</span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>                             count<span class="op">=</span>[chunk_samples, <span class="dv">16</span>])</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Add metadata as attributes</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>io.DefineAttribute(<span class="st">"session_name"</span>, <span class="st">"2025-04-21_19-08-01_Session1_MJ_Brown Building Apartments_Sunny"</span>)</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>io.DefineAttribute(<span class="st">"audio_sensor_name"</span>, <span class="st">"UMA-16V2 USB Mic Array"</span>)</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>io.DefineAttribute(<span class="st">"sample_rate"</span>, <span class="dv">44100</span>)</span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co"># ... add other metadata</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Open stream</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>writer <span class="op">=</span> io.Open(<span class="st">"DroneAudio"</span>, adios2.Mode.Write)</span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a><span class="co"># In audio capture loop</span></span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a><span class="cf">while</span> capturing:</span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Capture 20 seconds of audio data</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>    audio_chunk <span class="op">=</span> capture_audio(duration<span class="op">=</span><span class="dv">20</span>)  <span class="co"># Your capture function</span></span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Begin step and write data</span></span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    writer.BeginStep()</span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    writer.Put(audio_var, audio_chunk)</span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    writer.EndStep()</span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>writer.Close()</span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a><span class="co"># Continue high performance data preprocessing ? </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+
+
 </section>
 </section>
 
