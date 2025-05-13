@@ -1,0 +1,27 @@
+Drone Audio Dataset Statistical Analysis
+======================================
+
+Total samples analyzed: 300
+Classes: bebop, membo, unknown
+
+Class distribution:
+  bebop: 100 samples
+  membo: 100 samples
+  unknown: 100 samples
+
+Duration Statistics (seconds):
+         count      mean       std    min       max
+class                                              
+bebop      100  0.996720  0.051660  0.896  1.024000
+membo      100  1.002747  0.045205  0.896  1.024000
+unknown    100  0.993354  0.037865  0.743  1.021688
+
+Key Findings:
+  - rms: Highest in bebop, lowest in membo
+  - peak: Highest in bebop, lowest in membo
+  - crest_factor: Highest in unknown, lowest in membo
+  - zero_crossing_rate: Highest in bebop, lowest in unknown
+  - envelope_mean: Highest in bebop, lowest in membo
+  - envelope_std: Highest in bebop, lowest in membo
+
+Generated visualizations can be found in the 'audio_analysis' directory.
