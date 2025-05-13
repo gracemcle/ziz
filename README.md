@@ -3,15 +3,16 @@ Hi. I'll try to explain the code here.
 ## Random Forest Classifier for Drone Noise Detection
 ### acoustic_detection/random_forst_wf
 Order of workflow: 
-80 20 train test split
-Feature extraction of train and test sets separatately
-Features: Gammatone and Mel-Frequency Cepstral Coefficients, Zero Crossing Rate and RMS Energy,and Chroma features
-k-fold CV, k = 5
-Model: randfor.py (Random Forest)
-Grid search for hyperparameters
+* 80 20 train test split
+* Feature extraction of train and test sets separatately
+* Features: Gammatone and Mel-Frequency Cepstral Coefficients, Zero Crossing Rate and RMS Energy,and Chroma features
+* k-fold CV, k = 5
+* Model: randfor.py (Random Forest)
+* Grid search for hyperparameters
 
 ## CNN To Classify MAFAULDA dataset
 This was a project I did for LANL under Nathan Debardeleben in 2022. I used a CNN to classify each of the different faults from the dataset. For more details on the proejct, visit my linked in for the LANL presentation <https://www.linkedin.com/in/grace-mclewee/>
+
 I left the code untouched from the folder I dug it out of out for initial reactions and nostalgia. I remember everything being super messy; it was my busiest semseter of my undergraduate degree, and I had this project on top of everything! I'll give a rundown of what I think/can remember about it. 
 
 ### lanl_cnn/preprocess/datagen2.py
