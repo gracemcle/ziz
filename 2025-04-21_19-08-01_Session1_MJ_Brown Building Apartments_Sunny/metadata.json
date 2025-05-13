@@ -1,0 +1,27 @@
+{
+    "session_name": "2025-04-21_19-08-01_Session1_MJ_Brown Building Apartments_Sunny",
+    "chunk_size_in_seconds": 20,
+    "timestamp": "2025-04-21_19-08-01",
+    "session_number": 1,
+    "user": "MJ",
+    "location": "Brown Building Apartments",
+    "weather": "Sunny",
+    "duration_minutes": 10,
+    "audio_sensor_name": "UMA-16V2 USB Mic Array",
+    "drone_name_model": "DJI Phantom 4",
+    "mic_to_source_distance": "26 feet",
+    "mic_source_positioning": "Straight and in-line",
+    "sound_source_type": "Indoor drone recording",
+    "speaker_name": "EBODA B18P",
+    "horizontal_gimbal_position": "2048 (90 degree)",
+    "sound_card_sample_rate": 44100,
+    "audio_chunks_timestamps": [
+        {
+            "chunk_index": 0,
+            "start_timestamp": 32053.604505216,
+            "end_timestamp": 32073.618983021,
+            "file_name": "/media/jetson/Extreme SSD/acoustic_model/Data_Collection/2025-04-21_19-08-01_Session1_MJ_Brown Building Apartments_Sunny/audio_chunks/audio_chunk_0.npy",
+            "memory_usage_MB": 53.83
+        }
+    ]
+}
